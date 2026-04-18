@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SupportAI Admin Panel</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+         :root {
+            --bg: #050810;
+            --bg2: #080c18;
+            --surface: rgba(255, 255, 255, 0.04);
+            --surface2: rgba(255, 255, 255, 0.06);
+            --surface3: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.09);
+            --border2: rgba(255, 255, 255, 0.14);
+            --accent: #7c6ff7;
+            --accent2: #a78bfa;
+            --accent3: #c4b5fd;
+            --glow: rgba(124, 111, 247, 0.35);
+            --glow2: rgba(124, 111, 247, 0.12);
+            --text: #f0f2ff;
+            --text2: #8b92b8;
+            --text3: #3d4466;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --radius: 14px;
+            --font: "Inter", "Segoe UI", system-ui, sans-serif;
+        }
+        
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            position: relative;
+        }
+        /* Ambient background */
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: -20%;
+            right: -10%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient( circle, rgba(124, 111, 247, 0.08) 0%, transparent 65%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: drift 18s ease-in-out infinite alternate;
+        }
+        
+        body::after {
+            content: "";
+            position: fixed;
+            bottom: -20%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient( circle, rgba(52, 211, 153, 0.05) 0%, transparent 65%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: drift 22s ease-in-out infinite alternate-reverse;
+        }
+        
+        @keyframes drift {
+            from {
+                transform: translate(0, 0);
+            }
+            to {
+                transform: translate(30px, 20px);
+            }
+        }
+        /* ── Login ── */
+        
+        #loginScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 44px;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+        }
+        
+        .login-card h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+        
+        .login-card p {
+            font-size: 14px;
+            color: var(--text2);
+            margin-bottom: 30px;
+        }
+        
+        .login-card input {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 13px 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            margin-bottom: 14px;
+            transition: all 0.25s;
+            font-family: var(--font);
+            backdrop-filter: blur(10px);
+        }
+        
+        .login-card input:focus {
+            border-color: rgba(124, 111, 247, 0.5);
+            box-shadow: 0 0 0 3px var(--glow2);
+        }
+        
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #5b50d6, #7c6ff7);
+            border: none;
+            color: white;
+            padding: 13px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font);
+            box-shadow: 0 4px 20px var(--glow);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px var(--glow);
+        }
+        
+        .login-hint {
+            font-size: 12px;
+            color: var(--text3);
+            margin-top: 14px;
+        }
+        
+        .login-error {
+            color: var(--danger);
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+            font-weight: 500;
+        }
+        /* ── Layout ── */
+        
+        #adminApp {
+            display: none;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .topbar {
+            background: rgba(5, 8, 16, 0.88);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-bottom: 1px solid var(--border);
+            height: 62px;
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        
+        .topbar-brand span {
+            background: linear-gradient(135deg, var(--accent2), var(--accent3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .topbar-link {
+            color: var(--text2);
+            font-size: 13px;
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 9px;
+            transition: all 0.2s;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+        
+        .topbar-link:hover {
+            background: var(--surface2);
+            color: var(--text);
+            border-color: var(--border);
+        }
+        
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text2);
+            padding: 7px 16px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font);
+        }
+        
+        .btn-logout:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        /* Nav tabs */
+        
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 14px 28px 0;
+            background: rgba(5, 8, 16, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            border-radius: 10px 10px 0 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text2);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            border-bottom: none;
+        }
+        
+        .tab:hover {
+            color: var(--text);
+            background: var(--surface);
+        }
+        
+        .tab.active {
+            background: rgba(8, 12, 24, 0.95);
+            color: var(--accent3);
+            border-color: var(--border);
+        }
+        /* Content */
+        
+        .content {
+            padding: 32px 28px;
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        /* Stat cards */
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        
+        .stat-card {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient( 90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+        }
+        
+        .stat-card:hover {
+            border-color: rgba(124, 111, 247, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-card.accent {
+            border-color: rgba(124, 111, 247, 0.25);
+            background: rgba(124, 111, 247, 0.06);
+        }
+        
+        .stat-card .val {
+            font-size: 34px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+        
+        .stat-card .lbl {
+            font-size: 13px;
+            color: var(--text2);
+            margin-top: 6px;
+            font-weight: 400;
+        }
+        
+        .stat-card .icon {
+            font-size: 22px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        /* Chart card
+    */
+        
+        .chart-card {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient( 90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
+        
+        .chart-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text2);
+        }
+        
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            height: 130px;
+        }
+        
+        .bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, var(--accent2), #5b50d6);
+            border-radius: 6px 6px 0 0;
+            min-height: 4px;
+            transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 14px rgba(124, 111, 247, 0.3);
+        }
+        
+        .bar-label {
+            font-size: 10px;
+            color: var(--text3);
+            font-weight: 500;
+        }
+        
+        .bar-val {
+            font-size: 11px;
+            color: var(--text2);
+            font-weight: 600;
+        }
+        /* Table card */
+        
+        .table-card {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        
+        .table-head {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .table-head h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text3);
+            padding: 11px 22px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 13px 22px;
+            font-size: 13.5px;
+            color: var(--text2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            vertical-align: top;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.025);
+        }
+        
+        .badge {
+            display: inline-block;
+            font-size: 10px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        
+        .badge-green {
+            background: rgba(52, 211, 153, 0.12);
+            color: var(--success);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+        
+        .badge-yellow {
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--warning);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+        
+        .badge-red {
+            background: rgba(248, 113, 113, 0.12);
+            color: var(--danger);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+        }
+        /* Intents */
+        
+        .intents-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+            align-items: center;
+        }
+        
+        .search-input {
+            flex: 1;
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 11px 16px;
+            border-radius: 11px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.25s;
+            font-family: var(--font);
+        }
+        
+        .search-input:focus {
+            border-color: rgba(124, 111, 247, 0.5);
+            box-shadow: 0 0 0 3px var(--glow2);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text3);
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #5b50d6, #7c6ff7);
+            border: none;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 11px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            white-space: nowrap;
+            font-family: var(--font);
+            box-shadow: 0 4px 16px var(--glow);
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--glow);
+        }
+        
+        .intent-card {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 22px;
+            margin-bottom: 10px;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .intent-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent), var(--accent2));
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        
+        .intent-card:hover {
+            border-color: rgba(124, 111, 247, 0.3);
+            transform: translateX(3px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .intent-card:hover::before {
+            opacity: 1;
+        }
+        
+        .intent-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 11px;
+        }
+        
+        .intent-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent3);
+            letter-spacing: -0.01em;
+        }
+        
+        .intent-actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .btn-sm {
+            padding: 5px 13px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+            font-family: var(--font);
+        }
+        
+        .btn-edit {
+            background: transparent;
+            color: var(--text2);
+        }
+        
+        .btn-edit:hover {
+            background: var(--surface2);
+            color: var(--text);
+            border-color: var(--border2);
+        }
+        
+        .btn-del {
+            background: transparent;
+            color: var(--text3);
+            border-color: transparent;
+        }
+        
+        .btn-del:hover {
+            color: var(--danger);
+            background: rgba(248, 113, 113, 0.08);
+            border-color: rgba(248, 113, 113, 0.2);
+        }
+        
+        .patterns-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 9px;
+        }
+        
+        .pattern-tag {
+            background: rgba(124, 111, 247, 0.08);
+            color: var(--text2);
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(124, 111, 247, 0.15);
+            font-weight: 400;
+        }
+        
+        .responses-list {
+            font-size: 12px;
+            color: var(--text3);
+            font-weight: 400;
+        }
+        /* Modal */
+        
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        
+        .modal-overlay.open {
+            display: flex;
+        }
+        
+        .modal {
+            background: rgba(10, 14, 28, 0.97);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border2);
+            border-radius: 22px;
+            padding: 32px;
+            width: 520px;
+            max-width: 95vw;
+            max-height: 88vh;
+            overflow-y: auto;
+            box-shadow: 0 32px 100px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.94) translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .modal h2 {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 22px;
+            letter-spacing: -0.02em;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            color: var(--text2);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 7px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 11px 15px;
+            border-radius: 11px;
+            font-size: 14px;
+            font-family: var(--font);
+            outline: none;
+            transition: all 0.25s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: rgba(124, 111, 247, 0.5);
+            box-shadow: 0 0 0 3px var(--glow2);
+        }
+        
+        .form-group textarea {
+            min-height: 88px;
+            resize: vertical;
+        }
+        
+        .form-hint {
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 5px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 22px;
+        }
+        
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text2);
+            padding: 11px 22px;
+            border-radius: 11px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font);
+        }
+        
+        .btn-cancel:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #5b50d6, #7c6ff7);
+            border: none;
+            color: white;
+            padding: 11px 22px;
+            border-radius: 11px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font);
+            box-shadow: 0 4px 16px var(--glow);
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px var(--glow);
+        }
+        /* Queue / empty */
+        
+        .queue-empty {
+            text-align: center;
+            padding: 48px;
+            color: var(--text3);
+            font-size: 14px;
+        }
+        
+        .refresh-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text2);
+            padding: 7px 15px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font);
+        }
+        
+        .refresh-btn:hover {
+            background: var(--surface3);
+            color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <div style="font-size: 36px; margin-bottom: 12px">🤖</div>
+            <h1>Admin Panel</h1>
+            <p>SupportAI Management Console</p>
+            <div class="login-error" id="loginError">Incorrect password</div>
+            <input type="password" id="passwordInput" placeholder="Enter admin password" onkeydown="if (event.key === 'Enter') login();" />
+            <button class="btn-primary" onclick="login()">Sign In</button>
+            <div class="login-hint">Default password: <code>admin123</code></div>
+        </div>
+    </div>
+
+    <!-- Admin App -->
+    <div id="adminApp">
+        <div class="topbar">
+            <div class="topbar-brand">🤖 <span>SupportAI</span> Admin</div>
+            <div class="topbar-right">
+                <a href="/" class="topbar-link">💬 Chat Demo</a>
+                <button class="btn-logout" onclick="logout()">Sign Out</button>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <div class="tab active" onclick="switchTab('analytics')">
+                📊 Analytics
+            </div>
+            <div class="tab" onclick="switchTab('conversations')">
+                💬 Conversations
+            </div>
+            <div class="tab" onclick="switchTab('intents')">🧠 Train Intents</div>
+            <div class="tab" onclick="switchTab('queue')">👤 Agent Queue</div>
+        </div>
+
+        <div class="content">
+            <!-- Analytics -->
+            <div class="section active" id="tab-analytics">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card accent">
+                        <div class="icon">💬</div>
+                        <div class="val" id="totalChats">—</div>
+                        <div class="lbl">Total Chats</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">✅</div>
+                        <div class="val" id="resolved">—</div>
+                        <div class="lbl">Resolved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">👤</div>
+                        <div class="val" id="handedOver">—</div>
+                        <div class="lbl">Handed Over</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">📈</div>
+                        <div class="val" id="resolutionRate">—</div>
+                        <div class="lbl">Resolution Rate</div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Daily Chats (last 7 days)</div>
+                    <div class="bar-chart" id="barChart"></div>
+                </div>
+            </div>
+
+            <!-- Conversations -->
+            <div class="section" id="tab-conversations">
+                <div class="table-card">
+                    <div class="table-head">
+                        <h3>Recent Conversations</h3>
+                        <button class="refresh-btn" onclick="loadConversations()">
+                ↻ Refresh
+              </button>
+                    </div>
+                    <div id="convTable">
+                        <div class="queue-empty">No conversations yet.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intents -->
+            <div class="section" id="tab-intents">
+                <div class="intents-toolbar">
+                    <input class="search-input" id="intentSearch" placeholder="Search intents..." oninput="filterIntents()" />
+                    <button class="btn-add" onclick="openModal()">+ Add Intent</button>
+                </div>
+                <div id="intentsList"></div>
+            </div>
+
+            <!-- Queue -->
+            <div class="section" id="tab-queue">
+                <div class="table-card">
+                    <div class="table-head">
+                        <h3>Live Agent Queue</h3>
+                        <button class="refresh-btn" onclick="loadQueue()">
+                ↻ Refresh
+              </button>
+                    </div>
+                    <div id="queueTable">
+                        <div class="queue-empty">Queue is empty.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intent Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2 id="modalTitle">Add Intent</h2>
+            <div class="form-group">
+                <label>Intent Name</label>
+                <input type="text" id="intentName" placeholder="e.g. order_status" />
+            </div>
+            <div class="form-group">
+                <label>Training Patterns</label>
+                <textarea id="intentPatterns" placeholder="One pattern per line:&#10;where is my order&#10;track my order&#10;order status"></textarea>
+                <div class="form-hint">
+                    Each line = one training phrase the user might type
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Bot Responses</label>
+                <textarea id="intentResponses" placeholder="One response per line:&#10;I'll help you track that order!&#10;Sure, share your order number."></textarea>
+                <div class="form-hint">Bot will randomly pick one response</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-save" onclick="saveIntent()">Save Intent</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let editingId = null;
+        let allIntents = [];
+
+        async function login() {
+            const pw = document.getElementById("passwordInput").value;
+            const err = document.getElementById("loginError");
+            try {
+                const r = await fetch("/api/admin/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        password: pw,
+                    }),
+                });
+                const d = await r.json();
+                if (d.success) {
+                    document.getElementById("loginScreen").style.display = "none";
+                    document.getElementById("adminApp").style.display = "block";
+                    loadAnalytics();
+                    loadIntents();
+                } else {
+                    err.style.display = "block";
+                }
+            } catch (e) {
+                err.style.display = "block";
+            }
+        }
+
+        async function logout() {
+            await fetch("/api/admin/logout", {
+                method: "POST",
+            });
+            location.reload();
+        }
+
+        function switchTab(name) {
+            document
+                .querySelectorAll(".tab")
+                .forEach((t, i) =>
+                    t.classList.toggle(
+                        "active", ["analytics", "conversations", "intents", "queue"][i] === name,
+                    ),
+                );
+            document
+                .querySelectorAll(".section")
+                .forEach((s) => s.classList.remove("active"));
+            document.getElementById("tab-" + name).classList.add("active");
+            if (name === "conversations") loadConversations();
+            if (name === "queue") loadQueue();
+            if (name === "analytics") loadAnalytics();
+            if (name === "intents") loadIntents();
+        }
+
+        async function loadAnalytics() {
+            const r = await fetch("/api/admin/analytics");
+            if (!r.ok) return;
+            const d = await r.json();
+            document.getElementById("totalChats").textContent = d.totalChats;
+            document.getElementById("resolved").textContent = d.resolved;
+            document.getElementById("handedOver").textContent = d.handedOver;
+            document.getElementById("resolutionRate").textContent =
+                d.resolutionRate + "%";
+
+            const chart = document.getElementById("barChart");
+            chart.innerHTML = "";
+            const maxVal = Math.max(...d.dailyChats.map(([, v]) => v), 1);
+            d.dailyChats.forEach(([day, val]) => {
+                const col = document.createElement("div");
+                col.className = "bar-col";
+                const bar = document.createElement("div");
+                bar.className = "bar";
+                bar.style.height = Math.max(4, (val / maxVal) * 100) + "px";
+                const lbl = document.createElement("div");
+                lbl.className = "bar-label";
+                lbl.textContent = day.slice(5);
+                const v = document.createElement("div");
+                v.className = "bar-val";
+                v.textContent = val;
+                col.appendChild(v);
+                col.appendChild(bar);
+                col.appendChild(lbl);
+                chart.appendChild(col);
+            });
+            if (!d.dailyChats.length)
+                chart.innerHTML =
+                '<div style="color:var(--text3);font-size:13px;padding:40px;width:100%;text-align:center">No data yet — start chatting!</div>';
+        }
+
+        async function loadConversations() {
+            const r = await fetch("/api/admin/conversations");
+            if (!r.ok) return;
+            const convs = await r.json();
+            const el = document.getElementById("convTable");
+            if (!convs.length) {
+                el.innerHTML = '<div class="queue-empty">No conversations yet.</div>';
+                return;
+            }
+            el.innerHTML =
+                `<table><thead><tr><th>Session</th><th>Messages</th><th>Status</th><th>Started</th><th>Preview</th></tr></thead><tbody>` +
+                convs
+                .map(
+                    (c) => `<tr>
+        <td style="font-family:monospace;font-size:12px">${c.sessionId.slice(0, 12)}</td>
+        <td>${c.messages.length}</td>
+        <td><span class="badge badge-green">${c.status}</span></td>
+        <td>${new Date(c.startedAt).toLocaleString()}</td>
+        <td style="max-width:250px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${c.messages.slice(-1)[0]?.text || ""}</td>
+      </tr>`,
+                )
+                .join("") +
+                `</tbody></table>`;
+        }
+
+        async function loadIntents() {
+            const r = await fetch("/api/admin/intents");
+            if (!r.ok) return;
+            allIntents = await r.json();
+            renderIntents(allIntents);
+        }
+
+        function renderIntents(intents) {
+            document.getElementById("intentsList").innerHTML = intents
+                .map(
+                    (i) => `
+      <div class="intent-card">
+        <div class="intent-header">
+          <span class="intent-name">${i.name}</span>
+          <div class="intent-actions">
+            <button class="btn-sm btn-edit" onclick="editIntent('${i.id}')">✏ Edit</button>
+            <button class="btn-sm btn-del" onclick="deleteIntent('${i.id}')">🗑</button>
+          </div>
+        </div>
+        <div class="patterns-list">${i.patterns
+          .slice(0, 5)
+          .map((p) => `<span class="pattern-tag">${p}</span>`)
+          .join(
+            "",
+          )}${i.patterns.length > 5 ? `<span class="pattern-tag">+${i.patterns.length - 5} more</span>` : ""}</div>
+        <div class="responses-list">${i.responses.length} response${i.responses.length > 1 ? "s" : ""} configured</div>
+      </div>`,
+          )
+          .join("");
+      }
+
+      function filterIntents() {
+        const q = document.getElementById("intentSearch").value.toLowerCase();
+        renderIntents(
+          allIntents.filter(
+            (i) => i.name.includes(q) || i.patterns.some((p) => p.includes(q)),
+          ),
+        );
+      }
+
+      function openModal(intent = null) {
+        editingId = intent?.id || null;
+        document.getElementById("modalTitle").textContent = intent
+          ? "Edit Intent"
+          : "Add Intent";
+        document.getElementById("intentName").value = intent?.name || "";
+        document.getElementById("intentPatterns").value = intent
+          ? intent.patterns.join("\n")
+          : "";
+        document.getElementById("intentResponses").value = intent
+          ? intent.responses.join("\n")
+          : "";
+        document.getElementById("modalOverlay").classList.add("open");
+      }
+
+      function closeModal() {
+        document.getElementById("modalOverlay").classList.remove("open");
+      }
+
+      function editIntent(id) {
+        openModal(allIntents.find((i) => i.id === id));
+      }
+
+      async function saveIntent() {
+        const name = document.getElementById("intentName").value.trim();
+        const patterns = document
+          .getElementById("intentPatterns")
+          .value.split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const responses = document
+          .getElementById("intentResponses")
+          .value.split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        if (!name || !patterns.length || !responses.length) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const url = editingId
+          ? `/api/admin/intents/${editingId}`
+          : "/api/admin/intents";
+        const method = editingId ? "PUT" : "POST";
+        await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, patterns, responses }),
+        });
+        closeModal();
+        loadIntents();
+      }
+
+      async function deleteIntent(id) {
+        if (!confirm("Delete this intent?")) return;
+        await fetch(`/api/admin/intents/${id}`, { method: "DELETE" });
+        loadIntents();
+      }
+
+      async function loadQueue() {
+        const r = await fetch("/api/admin/queue");
+        if (!r.ok) return;
+        const queue = await r.json();
+        const el = document.getElementById("queueTable");
+        if (!queue.length) {
+          el.innerHTML = '<div class="queue-empty">No users in queue 🎉</div>';
+          return;
+        }
+        el.innerHTML =
+          `<table><thead><tr><th>Name</th><th>Session</th><th>Requested At</th><th>Status</th></tr></thead><tbody>` +
+          queue
+            .map(
+              (q) => `<tr>
+        <td>${q.userName}</td>
+        <td style="font-family:monospace;font-size:12px">${q.sessionId.slice(0, 12)}</td>
+        <td>${new Date(q.requestedAt).toLocaleString()}</td>
+        <td><span class="badge badge-yellow">${q.status}</span></td>
+      </tr>`,
+            )
+            .join("") +
+          `</tbody></table>`;
+      }
+
+      document
+        .getElementById("passwordInput")
+        .addEventListener("keydown", (e) => {
+          if (e.key === "Enter") login();
+        });
+      document.getElementById("modalOverlay").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) closeModal();
+      });
+    </script>
+</body>
+
+</html>
