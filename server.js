@@ -139,7 +139,7 @@ app.post('/api/handover', (req, res) => {
 });
 
 // ─── Admin API ──────────────────────────────────────────────────────────────
-const ADMIN_PASSWORD = 'admin123';
+const ADMIN_PASSWORD = 'admin12';
 
 app.post('/api/admin/login', (req, res) => {
   const { password } = req.body;
