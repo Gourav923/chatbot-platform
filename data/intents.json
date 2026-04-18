@@ -1,0 +1,122 @@
+[
+  {
+    "id": "1",
+    "name": "greeting",
+    "patterns": ["hello", "hi", "hey", "good morning", "good evening", "howdy", "what's up", "greetings"],
+    "responses": [
+      "Hello! 👋 Welcome to Support. How can I help you today?",
+      "Hi there! I'm your AI support assistant. What can I do for you?",
+      "Hey! Great to see you. What do you need help with?"
+    ]
+  },
+  {
+    "id": "2",
+    "name": "goodbye",
+    "patterns": ["bye", "goodbye", "see you", "thanks bye", "take care", "exit", "quit", "done"],
+    "responses": [
+      "Goodbye! Have a great day! 😊",
+      "Thanks for chatting. Take care!",
+      "Bye! Don't hesitate to reach out if you need anything."
+    ]
+  },
+  {
+    "id": "3",
+    "name": "order_status",
+    "patterns": ["where is my order", "track order", "order status", "order tracking", "when will my order arrive", "order number", "check my order"],
+    "responses": [
+      "I can help you track your order! Please share your order number and I'll look it up. 📦",
+      "To check your order status, I'll need your order ID (usually 6-8 digits). Could you provide that?",
+      "Sure! Share your order number (e.g. #123456) and I'll pull up the latest tracking info for you."
+    ]
+  },
+  {
+    "id": "4",
+    "name": "refund",
+    "patterns": ["refund", "return", "money back", "cancel order", "get my money", "refund policy", "return policy", "want to return"],
+    "responses": [
+      "I understand you'd like a refund. Our policy allows returns within 30 days of purchase. Shall I initiate the process? 💰",
+      "Refunds are processed within 5-7 business days. I'll need your order number to start. Do you have it handy?",
+      "No problem! I can help with your refund request. Please provide your order ID and reason for return."
+    ]
+  },
+  {
+    "id": "5",
+    "name": "product_info",
+    "patterns": ["tell me about", "product details", "features", "specifications", "what does it do", "how does it work", "product information"],
+    "responses": [
+      "I'd be happy to share product details! Which product are you asking about? 🛍️",
+      "Great question! Could you tell me the product name or SKU so I can give you accurate information?",
+      "I can help with product information. Please share the product name or ID."
+    ]
+  },
+  {
+    "id": "6",
+    "name": "payment",
+    "patterns": ["payment", "pay", "billing", "invoice", "charge", "credit card", "payment method", "how to pay"],
+    "responses": [
+      "We accept Visa, MasterCard, PayPal, and UPI. Is there a specific payment issue I can help with? 💳",
+      "For billing questions, could you describe the issue? I can help with payment failures, invoices, or method updates.",
+      "I can assist with payment-related queries. What specifically are you having trouble with?"
+    ]
+  },
+  {
+    "id": "7",
+    "name": "technical_support",
+    "patterns": ["not working", "broken", "error", "bug", "issue", "problem", "crash", "technical", "help me fix", "doesn't work"],
+    "responses": [
+      "Sorry to hear you're having trouble! Can you describe the issue in detail? Screenshots help too. 🔧",
+      "Let's get this fixed! What error message are you seeing, and on which device/browser?",
+      "Technical issues are our priority! Please describe what's happening and I'll guide you through the solution."
+    ]
+  },
+  {
+    "id": "8",
+    "name": "account",
+    "patterns": ["account", "login", "password", "forgot password", "reset password", "sign in", "can't login", "account locked"],
+    "responses": [
+      "For account issues, try the 'Forgot Password' link on the login page. I can also send a reset link to your email. 🔐",
+      "Account locked? This happens after 5 failed attempts. Reset your password or wait 30 minutes. Need help?",
+      "I can help with account access. What's the issue — forgotten password, locked account, or something else?"
+    ]
+  },
+  {
+    "id": "9",
+    "name": "shipping",
+    "patterns": ["shipping", "delivery", "how long", "estimated delivery", "shipping cost", "free shipping", "express delivery"],
+    "responses": [
+      "Standard shipping takes 5-7 days. Express (2-3 days) is available for $9.99. Free shipping on orders over $50! 🚚",
+      "Delivery times vary by location. Standard: 5-7 days, Express: 2-3 days. Need to track an existing order?",
+      "We ship to 50+ countries. Shipping costs and times vary — want me to calculate for your location?"
+    ]
+  },
+  {
+    "id": "10",
+    "name": "escalate",
+    "patterns": ["speak to human", "live agent", "real person", "talk to someone", "human support", "agent", "escalate", "not helpful"],
+    "responses": [
+      "Of course! Let me connect you with a live agent. Please click 'Connect Agent' below. ⏳",
+      "I'll transfer you to our support team right away. Average wait time is 2-3 minutes.",
+      "Understood. Connecting you with a human agent now. They'll have your chat history for context."
+    ]
+  },
+  {
+    "id": "11",
+    "name": "hours",
+    "patterns": ["working hours", "support hours", "open", "when are you available", "business hours", "office hours"],
+    "responses": [
+      "Our human support team is available Mon-Fri 9AM-6PM IST. This AI bot is available 24/7! 🕐",
+      "Live agents work 9AM-6PM (Mon-Fri). For urgent issues outside these hours, leave a message and we'll reply ASAP.",
+      "We're online 24/7 via this chatbot. Live agents available weekdays 9AM-6PM IST."
+    ]
+  },
+  {
+    "id": "12",
+    "name": "thank_you",
+    "patterns": ["thank you", "thanks", "thank you so much", "great help", "helpful", "awesome", "perfect"],
+    "responses": [
+      "You're welcome! 😊 Is there anything else I can help you with?",
+      "Happy to help! Anything else on your mind?",
+      "Glad I could assist! Feel free to ask if you need anything else."
+    ]
+  }
+]
